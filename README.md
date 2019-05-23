@@ -1,9 +1,9 @@
 # Amazon API Gateway Mutating Webhook For K8S
-This demo project is intend to illustrate how to use [Amazon API Gateway](https://aws.amazon.com/api-gateway/) and [AWS Lambda](https://aws.amazon.com/lambda/) to setup a HTTP service, then been integrated with Kubernetes as [admission webhooks](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) to receive admission requests and mutate or validate Kubernetes resources dynamically. Particularly this project will setup a mutating webhook to modify the docker image path in K8S Pod after the deployment been submitted to K8S API server and before it been persisted in etcd.
+This demo project is intended to illustrate how to use [Amazon API Gateway](https://aws.amazon.com/api-gateway/) and [AWS Lambda](https://aws.amazon.com/lambda/) to set up an HTTP service, then been integrated with Kubernetes as [admission webhooks](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) to receive admission requests and mutate or validate Kubernetes resources dynamically. Particularly this project will setup a mutating webhook to modify the docker image path in K8S Pod after the deployment been submitted to K8S API server and before it's been persisted in etcd.
 
 ## Use cases
 - The same k8s cluster need to be deployed and use different docker registry, for example k8s cluster deployed in AWS Oregon and Singapore region, and use ECR registry in local region.
-- Due to firewall or security restriction, public registry cannot be accessed and need to modify the image path to access other mirror repositories.
+- Due to firewall or security restriction, public registry cannot be accessed and need to modify the image path to access other mirrored repositories.
 
 ## How it works
 ![](./images/solution-diagram.png)
