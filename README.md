@@ -1,4 +1,4 @@
-# Amazon Api Gateway Mutating Webhook For K8S
+# Amazon API Gateway Mutating Webhook For K8S
 This demo project is intend to illustrate how to use [Amazon API Gateway](https://aws.amazon.com/api-gateway/) and [AWS Lambda](https://aws.amazon.com/lambda/) to setup a HTTP service, then been integrated with Kubernetes as [admission webhooks](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) to receive admission requests and mutate or validate Kubernetes resources dynamically. Particularly this project will setup a mutating webhook to modify the docker image path in K8S Pod after the deployment been submitted to K8S API server and before it been persisted in etcd.
 
 ## Use cases
@@ -72,25 +72,25 @@ This project will setup the API Gateway with Lambda to receive the admission req
 then the response of webhook(API Gateway with Lambda) is like this:
 ```json
 {
-    'body': {
-    'response': {
-        'allowed': True,
-        'patch': patch_base64,
-        'patchType': 'JSONPatch'
+    "body": {
+    "response": {
+        "allowed": "True",
+        "patch": "patch_base64",
+        "patchType": "JSONPatch"
     },
-    'headers': {
-      'Content-Type': 'application/json'
+    "headers": {
+      "Content-Type": "application/json"
     },
-    'statusCode': 200
+    "statusCode": 200
 }
 ```
 where the patch_base64 is base64 encoded of [JSON Patch](http://jsonpatch.com/), for example:
 ```json
 [
     {
-        'op': 'replace',
-        'path': '/spec/containers/0/image'),
-        'value': 'xxxx.dkr.ecr.us-west-2.amazonaws.com/nginx:latest'
+        "op": "replace",
+        "path": "/spec/containers/0/image",
+        "value": "xxxx.dkr.ecr.us-west-2.amazonaws.com/nginx:latest"
     }
 ]
 ```
