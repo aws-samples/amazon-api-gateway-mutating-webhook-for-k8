@@ -3,7 +3,7 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: image-mutating
 webhooks:
-  - name: image-mutating-webhook
+  - name: image.mutating.webhook
     failurePolicy: Ignore
     clientConfig:
         url: <WEB-HOOK-URL>
