@@ -98,9 +98,10 @@ JSON patch will be applied to the Pod spec and then persisted into etcd.
 
 ## How to deploy
 ### Prerequisites
-- Ensure that the Kubernetes cluster is at least as new as v1.9.
-- Ensure that MutatingAdmissionWebhook admission controllers are enabled.
-- Ensure that the admissionregistration.k8s.io/v1beta1 API is enabled.
+- Make sure that the Kubernetes cluster is at least as new as v1.9.
+- Make sure that MutatingAdmissionWebhook admission controllers are enabled.
+- Make sure that the admissionregistration.k8s.io/v1beta1 API is enabled.
+- If you are using AWS China regions, make sure your AWS account has been whitelisted for API Gateway access, you may contact AWS support for the procedure of the whitelisting.
 
 Amazon EKS has been enabled MutatingAdmissionWebhook.
 ### Steps to set up admission webhook with API Gateway and Lambda:
