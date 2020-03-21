@@ -45,6 +45,7 @@ Amazon EKS has been enabled MutatingAdmissionWebhook.
 
     #### OPTION #2 - Build from scratch
     Firstly please install AWS CLI and SAM CLI by following [AWS SAM documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+    
     1). Check out this repository 
 
     ```sh
