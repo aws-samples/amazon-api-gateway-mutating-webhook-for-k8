@@ -5,6 +5,84 @@ This demo project is intended to illustrate how to use [Amazon API Gateway](http
 - The same k8s cluster need to be deployed and use different docker registry, for example k8s cluster deployed in AWS Oregon and Singapore region, and use ECR registry in local region.
 - Due to firewall or security restriction, public registry cannot be accessed and need to modify the image path to access other mirrored repositories.
 
+## How to deploy
+### Prerequisites
+- Make sure that the Kubernetes cluster is at least as new as v1.9.
+- Make sure that MutatingAdmissionWebhook admission controllers are enabled.
+- Make sure that the admissionregistration.k8s.io/v1beta1 API is enabled.
+- If you are using AWS China regions, make sure your AWS account has been whitelisted for API Gateway access, you may contact AWS support for the procedure of the whitelisting.
+
+Amazon EKS has been enabled MutatingAdmissionWebhook.
+
+### Steps to set up admission webhook:
+1. Setup webhook with API GW, there are 2 options to build the API GW:
+    #### OPTION #1 - Install from SAR(Serverless App Repository)
+    This is the recommended approach, deploy it from SAR console:
+    |        Region        |                    Click and Deploy                     |
+    | :----------------: | :----------------------------------------------------------: |
+    |  **ap-northeast-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-northeast-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **ap-east-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-east-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **ap-northeast-2**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-northeast-2/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **ap-northeast-3**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-northeast-3/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **ap-south-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-south-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **ap-southeast-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-southeast-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **ap-southeast-2**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ap-southeast-2/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **ca-central-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/ca-central-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **eu-central-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/eu-central-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **eu-north-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/eu-north-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **eu-west-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/eu-west-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **eu-west-2**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/eu-west-2/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **eu-west-3**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/eu-west-3/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **me-south-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/me-south-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **sa-east-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/sa-east-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **us-east-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/us-east-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **us-east-2**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/us-east-2/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **us-west-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/us-west-1/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **us-west-2**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://deploy.serverlessrepo.app/us-west-2/?app=arn:aws:serverlessrepo:us-east-1:269621987045:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **cn-north-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://console.amazonaws.cn/lambda/home?region=cn-north-1#/create/app?applicationId=arn:aws-cn:serverlessrepo:cn-north-1:086750097665:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+    |  **cn-northwest-1**  |[![](https://img.shields.io/badge/SAR-Deploy%20Now-yellow.svg)](https://console.amazonaws.cn/lambda/home?region=cn-northwest-1#/create/app?applicationId=arn:aws-cn:serverlessrepo:cn-north-1:086750097665:applications/amazon-api-gateway-mutating-webhook-for-k8s)|
+
+
+    #### OPTION #2 - Build from scratch
+    Firstly please install AWS CLI and SAM CLI by following [AWS SAM documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+    1). Check out this repository 
+
+    ```sh
+    $ git clone https://github.com/aws-samples/amazon-api-gateway-mutating-webhook-for-k8.git
+    $ cd amazon-api-gateway-mutating-webhook-for-k8
+    ```
+
+    2). Build the SAM package, replace my_s3_bucket with your S3 bucket name at first.
+
+    ```sh
+    $ export S3_BUCKET=my_s3_bucket
+    $ sam package -t sam-template.yaml --s3-bucket ${S3_BUCKET} --output-template-file packaged.yaml
+    ```
+
+    3). Deploy SAM package
+
+    ```sh
+    $ sam deploy -t packaged.yaml --stack-name amazon-api-gateway-mutating-webhook-for-k8 --capabilities CAPABILITY_IAM
+    ```
+2. Go to the cloudformation stack console, find the stack which name is serverlessrepo-amazon-api-gateway-mutating-webhook-for-k8s if you are are using SAR deployment in previous step, or find the stack with name amazon-api-gateway-mutating-webhook-for-k8, get APIGatewayURL from the outputs of this stack.
+
+3. Create k8s MutatingWebhookConfiguration resource
+    - Modify mutating-webhook.yaml，replace <WEB-HOOK-URL> with the value of APIGatewayURL
+    - Create K8S resource:
+        ```bash
+        $ kubectl apply -f mutating-webhook.yaml
+        ```
+4. Deploy sample k8s deployment
+    ```bash
+    $ kubectl apply -f ./nginx-gcr.yaml
+    ```
+5. Check the image path 
+    ```bash
+    $ kubectl get pod nginx-gcr-deployment-784bf76d96-hjmv4 -o=jsonpath='{.spec.containers[0].image}'
+    asia.gcr.io/nginx
+    ```
+    you may noticed the image path has been changed from "gcr.io/nginx" to "asia.gcr.io/nginx"
+
 ## How it works
 ![](./images/solution-diagram.png)
 The most famous use case of k8s mutating webhook is the [istio sidecar injector](https://istio.io/docs/reference/commands/sidecar-injector/), you may also reference [K8S documentation](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) or [3rd-party blog](https://medium.com/dowjones/how-did-that-sidecar-get-there-4dcd73f1a0a4) to get understand how k8s admission works.
@@ -95,35 +173,6 @@ where the patch_base64 is base64 encoded of [JSON Patch](http://jsonpatch.com/),
 ]
 ```
 JSON patch will be applied to the Pod spec and then persisted into etcd.
-
-## How to deploy
-### Prerequisites
-- Make sure that the Kubernetes cluster is at least as new as v1.9.
-- Make sure that MutatingAdmissionWebhook admission controllers are enabled.
-- Make sure that the admissionregistration.k8s.io/v1beta1 API is enabled.
-- If you are using AWS China regions, make sure your AWS account has been whitelisted for API Gateway access, you may contact AWS support for the procedure of the whitelisting.
-
-Amazon EKS has been enabled MutatingAdmissionWebhook.
-### Steps to set up admission webhook with API Gateway and Lambda:
-1. Deploy K8S cluster, you may use [eksctl](https://eksctl.io/) to setup EKS clusters with worker nodes as well.
-2. Deploy webhook server, create new CloudFormation with template api-gateway.yaml
-3. Create k8s MutatingWebhookConfiguration resource
-    - Find APIGateWayURL from the CloudFormation outputs in previous step.
-    - Modify mutating-webhook.yaml，replace <WEB-HOOK-URL> with the value of APIGateWayURL
-    - Create K8S resource:
-        ```bash
-        $ kubectl apply -f mutating-webhook.yaml
-        ```
-4. Deploy sample k8s deployment
-    ```bash
-    $ kubectl apply -f ./nginx-gcr.yaml
-    ```
-5. Check the image path 
-    ```bash
-    $ kubectl get pod nginx-gcr-deployment-784bf76d96-hjmv4 -o=jsonpath='{.spec.containers[0].image}'
-    asia.gcr.io/nginx
-    ```
-    you may noticed the image path has been changed from "gcr.io/nginx" to "asia.gcr.io/nginx"
 
 ## License Summary
 

@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "K8S image path mutation webhook"
+Transform: AWS::Serverless-2016-10-31
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: amazon-api-gateway-mutating-webhook-for-k8s
+    Description: Amazon API Gateway Mutating Webhook For K8S
+    Author: Walkley He
+    SpdxLicenseId:  MIT-0
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+    Labels: ['api-gateway', 'k8s']
+    HomePageUrl: https://github.com/aws-samples/amazon-api-gateway-mutating-webhook-for-k8
+    SemanticVersion: 0.0.1
+    SourceCodeUrl: https://github.com/aws-samples/amazon-api-gateway-mutating-webhook-for-k8
+Resources:
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: POST
+      Handler: lambda_function.handler
+      Runtime: python2.7
+      MemorySize: 128
+      Timeout: 60
+Outputs:
+  APIGatewayURL:
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}"
