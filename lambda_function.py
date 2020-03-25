@@ -2,6 +2,7 @@ import json
 import base64
 
 image_mirrors = {
+  #'/':'<some dockerhub mirror>', #you can set dockerhub mirror with "/"
   'gcr.io/': 'asia.gcr.io/',
   'k8s.gcr.io/': 'asia.gcr.io/google-containers/'
 }
@@ -42,12 +43,25 @@ def handler(event, context):
 def dict_get(dictionary, keys, default=None):
   return reduce(lambda d, key: d.get(key, default) if isinstance(d, dict) else default, keys.split("."), dictionary)
 
+def replace_dockerhub_prfix(image):
+  if image.startswith("library/"):
+    return image[len("library/"):]
+  elif image.startswith("docker.io/"):
+    return image.replace("docker.io/library/","").replace("docker.io/","")
+
 def image_patch(containers, path_prefix):
   json_patch = []
   for idx, container in enumerate(containers):
     image = container['image']
+    math_mirror=False
     for orig_image, mirror_image in image_mirrors.iteritems():
       if image.startswith(orig_image):
+        math_mirror=True
         image = mirror_image + image[len(orig_image):]
-        json_patch.append({'op': 'replace', 'path': '%s/%d/image' % (path_prefix, idx), 'value': image})
+    if "/" in image_mirrors and math_mirror==False:
+      if image.startswith("docker.io/") or image.startswith("library/"):
+        image = image_mirrors["/"] + replace_dockerhub_prfix(image)
+      else:
+        image =  image_mirrors["/"] + image
+    json_patch.append({'op': 'replace', 'path': '%s/%d/image' % (path_prefix, idx), 'value': image})
   return json_patch
