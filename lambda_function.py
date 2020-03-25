@@ -61,7 +61,7 @@ def image_patch(containers, path_prefix):
     if "/" in image_mirrors and math_mirror==False:
       if image.startswith("docker.io/") or image.startswith("library/"):
         image = image_mirrors["/"] + replace_dockerhub_prfix(image)
-      else:
+      elif "." not in image.split("/")[0]:
         image =  image_mirrors["/"] + image
     json_patch.append({'op': 'replace', 'path': '%s/%d/image' % (path_prefix, idx), 'value': image})
   return json_patch
