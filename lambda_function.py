@@ -1,5 +1,6 @@
 import json
 import base64
+from functools import reduce
 
 image_mirrors = {
   #'/':'<some dockerhub mirror>', #you can set dockerhub mirror with "/"
@@ -23,9 +24,12 @@ def handler(event, context):
 
   print(json.dumps(json_patch))
   # set response body
-  patch_b64 = base64.b64encode(json.dumps(json_patch))
+  patch_b64 = base64.b64encode(json.dumps(json_patch).encode("utf-8")).decode("utf-8")
   response_body = {
+    'kind': 'AdmissionReview',
+    'apiVersion': 'admission.k8s.io/v1',
     'response': {
+      'uid': dict_get(request_body, 'request.uid'),
       'allowed': True,
       'patch': patch_b64,
       'patchType': 'JSONPatch'
@@ -54,7 +58,7 @@ def image_patch(containers, path_prefix):
   for idx, container in enumerate(containers):
     image = container['image']
     math_mirror=False
-    for orig_image, mirror_image in image_mirrors.iteritems():
+    for orig_image, mirror_image in image_mirrors.items():
       if image.startswith(orig_image):
         math_mirror=True
         image = mirror_image + image[len(orig_image):]

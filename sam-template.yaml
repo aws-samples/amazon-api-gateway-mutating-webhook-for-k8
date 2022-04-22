@@ -24,7 +24,7 @@ Resources:
             Path: /
             Method: POST
       Handler: lambda_function.handler
-      Runtime: python2.7
+      Runtime: python3.9
       MemorySize: 128
       Timeout: 60
 Outputs:

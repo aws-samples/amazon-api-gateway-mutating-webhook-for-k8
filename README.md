@@ -152,7 +152,10 @@ then the response of webhook(API Gateway with Lambda) is like this:
 ```json
 {
     "body": {
+    "kind": "AdmissionReview",
+    "apiVersion": "admission.k8s.io/v1",
     "response": {
+        "uid": "request.uid",
         "allowed": "True",
         "patch": "patch_base64",
         "patchType": "JSONPatch"
